@@ -1,0 +1,38 @@
+{
+  "name": "zen-breadcrumb",
+  "description": "Article autour de la création d'une directive de génération de fil d'Ariane",
+  "version": "0.1.0",
+  "homepage": "https://github.com/Zenika/zen-breadcrumb",
+  "author": {
+    "name": "Nicolas Cuillery"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Zenika/zen-breadcrumb.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Zenika/zen-breadcrumb/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/Zenika/zen-breadcrumb/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "lib/zen-breadcrumb.js",
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "devDependencies": {
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-contrib-nodeunit": "~0.2.0",
+    "grunt-contrib-watch": "~0.4.0",
+    "grunt": "~0.4.4"
+  },
+  "keywords": []
+}
