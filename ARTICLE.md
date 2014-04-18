@@ -66,4 +66,85 @@ Pas d'Angular en vue encore mais les bases sont là !
 
 ### Build
 
+Le workflow d'industrialisation convient à 90% pour le développpement de la librairie. La seule modification que nous
+allons apporter est le remplacement du lanceur de test NodeUnit par Karma.
+
+Commençons par le fichier `package.json` qui contient les informations demandées lors de la génération. C'est la carte d'identité du projet.
+Les informations sont purement informatives dans notre cas (la librairie n'est pas un module npm !) à l'exception de la
+propriété `devDependencies` qui doit contenir les modules utiles au développement (Grunt & ses plugins notamment).
+
+Dans les `devDependencies` figure NodeUnit (sous forme de plugin Grunt). Nous le remplaçons par
+[Karma](http://karma-runner.github.io/) qui est le lanceur de test développé par la team Angular. Il est largement répandu
+dans la communauté Angular (et Javascript en général).
+```js
+  [...]
+  "devDependencies": {
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-jshint": "~0.6.0",
+    //"grunt-contrib-nodeunit": "~0.2.0",
+    "grunt-contrib-watch": "~0.4.0",
+    "grunt": "~0.4.4",
+    "karma": "~0.12.8", // Lanceur de test
+    "karma-jasmine": "~0.2.0", // API de test
+    "karma-phantomjs-launcher": "~0.1.4", // Lanceur de navigateur
+    "grunt-karma": "~0.8.2" // Plugin pour lancer Karma dans une tâche Grunt
+  },
+  [...]
+```
+Note : Toute modification dans les dépendances de `package.json` nécessite l'exécution de la commande `npm install`
+
+Karma nécessite un fichier de configuration `karma.conf.js` qui va contenir notamment :
+- le framework de test (librairie JS proposant l'API de test, ici : Jasmine)
+- l'emplacement des fichiers de test (appellés "specs"), des fichiers à tester et d'éventuelles dépendances
+- les navigateurs sur lesquels les tests vont être exécutés
+- le format des rapports d'exécution des tests
+```js
+module.exports = function(config) {
+  config.set({
+    basePath: '',
+    frameworks: ['jasmine'],
+    files: [
+      'lib/zen-breadcrumb.js', // Librairie à tester
+      'test/**/*.js' // Specs
+    ],
+    reporters: ['progress'], // Affiche la progression des tests dans la console
+    browsers: ['PhantomJS'], // Navigateur Webkit sans interface graphique (headless)
+    singleRun: true // Fin du processus à la fin de l'exécution
+  });
+};
+```
+
+Enfin, le plugin grunt-karma nécessite la déclaration d'une tâche dans le `Gruntfile.js` qui remplace celle de nodeunit :
+```js
+  [...]
+  //nodeunit: {
+  //  files: ['test/**/*_test.js']
+  //},
+  karma: {
+    unit: {
+      configFile: 'karma.conf.js'
+    }
+  },
+  [...]
+  //grunt.loadNpmTasks('grunt-nodeunit');
+  grunt.loadNpmTasks('grunt-karma');
+  [...]
+  //grunt.registerTask('default', ['jshint', 'nodeunit', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'karma', 'concat', 'uglify']);
+  grunt.registerTask('test', ['jshint', 'karma']);
+  [...]
+```
+
+Les tests peuvent maintenant être exécutés avec la commande :
+```
+grunt test
+```
+
+Toujours pas d'Angular, mais nous avons préparé le terrain en mettant en place Karma.
+
+**Commit :** [83d16f8](https://github.com/Zenika/zen-breadcrumb/commit/83d16f868138f18e4860cf51e327fe8df55fca07) (Note :
+la mise en place de test de module RequireJS ne concernant pas le sujet, le test a été réduit à l'extrême, avec la syntaxe
+Jasmine tout de même)
+
 ### Dépendances
