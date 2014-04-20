@@ -143,8 +143,85 @@ grunt test
 
 Toujours pas d'Angular, mais nous avons préparé le terrain en mettant en place Karma.
 
-**Commit :** [83d16f8](https://github.com/Zenika/zen-breadcrumb/commit/83d16f868138f18e4860cf51e327fe8df55fca07) (Note :
-la mise en place de test de module RequireJS ne concernant pas le sujet, le test a été réduit à l'extrême, avec la syntaxe
+**Commit :** [83d16f8681](https://github.com/Zenika/zen-breadcrumb/commit/83d16f868138f18e4860cf51e327fe8df55fca07) (Note :
+la mise en place de test de module RequireJS ne concernant pas le sujet de l'article, le test a été réduit à l'extrême (avec la syntaxe
 Jasmine tout de même)
 
 ### Dépendances
+Après avoir construit un cadre de build et de test, nous allons utiliser [Bower](http://bower.io/). Bower va servir
+à 2 choses :
+- Gérer les dépendances du module (Angular et ui-router)
+- Publier les informations à destination des projets qui utiliseront le module (le module devient lui-même une
+dépendance Bower)
+
+Bower est un module npm qui pourrait figurer dans le `package.json` avec Grunt et Karma, cependant il est de tradition de
+l'installer au niveau global avec la commande :
+```
+npm install -g bower
+```
+
+Nous créons un fichier `bower.json` dans le dossier racine qui sera la carte d'identité du projet du point de vue de
+Bower (comme l'est le `package.json` pour npm) :
+```js
+{
+  "name": "zen-breadcrumb", // Nom de la librairie
+  "version": "0.1.0", // Version de la librairie
+  "main": "dist/zen-breadcrumb.js", // Chemin du fichier principal
+  "dependencies": {
+    "angular": ">=1.0.8",
+    "angular-ui-router": ">=0.2.0"
+  },
+  "devDependencies": {
+    "angular-mocks": ">=1.0.8"
+  }
+}
+```
+Nous retrouvons les mêmes champs que dans le `package.json`, à la différence que ces informations ont vraiment un rôle :
+Elles sont indispensables à l'utilisation de la librairie en tant que dépendance Bower.
+
+La propriété `dependencies` définit les prérequis de la librairie, en l'occurence : Angular et le ui-router.
+
+La propriété `devDependencies` définit les dépendances pour le développement uniquement (elles ne sont pas
+téléchargées par les projets utilisant notre librairie). Ici, nous n'allons avoir besoin que du module de tests unitaires
+d'Angular.
+
+Maintenant que les dépendances ont été déclarées, il faut les installer en lançant la commande :
+```
+bower install
+```
+Par défaut, elles se trouvent dans le dossier `bower_components`.
+
+Nous pouvons maintenant initialiser un module Angular dans le fichier `lib/zen-breadcrumb.js` qui déclare le module du
+ui-router en dépendance :
+```js
+angular.module('zen-breadcrumb', ['ui.router.state']);
+```
+
+Et son test :
+```js
+describe('The module zen-breadcrumb', function() {
+
+    beforeEach(function() {
+        module('zen-breadcrumb');
+    });
+
+    it('is loaded', function() {
+        var zenBreadcrumb = angular.module('zen-breadcrumb');  // angular.module avec 1 seul argument --> Getter
+        expect(zenBreadcrumb.name).toBe('zen-breadcrumb');
+    });
+
+    it('has a $state service', inject(function($state) {
+        expect($state).toBeDefined(); // Service du ui-router
+    }));
+
+});
+```
+
+Nous avons maintenant un module Angular (vide) prêt à être développé dans une architecture adaptée avec :
+- Mécanisme de build (minification)
+- Tests
+- Gestion des dépendances
+
+**Commit :** [612e1ec855](https://github.com/Zenika/zen-breadcrumb/commit/612e1ec85540bd88f0d34a49f1217792bb6807bb)
+
+## Développement
