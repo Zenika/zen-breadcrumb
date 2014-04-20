@@ -1,10 +1,19 @@
 'use strict';
-/* global describe, it, expect */
+/* global angular, describe, it, beforeEach, expect, inject */
 
-describe('Dummy test', function() {
+describe('The module zen-breadcrumb', function() {
 
-    it('always succeed', function() {
-        expect(true).toBe(true);
+    beforeEach(function() {
+        module('zen-breadcrumb');
     });
+
+    it('is loaded', function() {
+        var zenBreadcrumb = angular.module('zen-breadcrumb');
+        expect(zenBreadcrumb.name).toBe('zen-breadcrumb');
+    });
+
+    it('has a $state service', inject(function($state) {
+        expect($state).toBeDefined();
+    }));
 
 });
