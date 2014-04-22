@@ -1,19 +1,24 @@
 'use strict';
 /* global angular, describe, it, beforeEach, expect, inject */
 
-describe('The module zen-breadcrumb', function() {
+describe('The directive zenBreadcrumb', function() {
+
+    var element, scope;
 
     beforeEach(function() {
         module('zen-breadcrumb');
     });
 
-    it('is loaded', function() {
-        var zenBreadcrumb = angular.module('zen-breadcrumb');
-        expect(zenBreadcrumb.name).toBe('zen-breadcrumb');
-    });
-
-    it('has a $state service', inject(function($state) {
-        expect($state).toBeDefined();
+    beforeEach(inject(function($rootScope, $compile) {
+        element = angular.element('<div zen-breadcrumb></div>');
+        var compile = $compile(element);
+        scope = $rootScope.$new();
+        compile(scope);
+        scope.$digest();
     }));
+
+    it('is compiled', function() {
+        expect(element.text()).toContain('Zen breadcrumb');
+    });
 
 });
