@@ -225,3 +225,70 @@ Nous avons maintenant un module Angular (vide) prêt à être développé dans u
 **Commit :** [612e1ec855](https://github.com/Zenika/zen-breadcrumb/commit/612e1ec85540bd88f0d34a49f1217792bb6807bb)
 
 ## Développement
+
+Après cette première partie consacrée à la mise en place de l'environnement de développement, nous allons maintenant
+nous consacrer au fonctionnel : le fil d'Ariane.
+
+Nous développerons étape par étape, en commençant par le début : déclencher une directive, afficher l'état courant,
+afficher la chaîne d'états...
+
+D'autres étapes suivront, déduites de la question "Qu'est ce qu'un développeur attends d'un module de fil
+d'Ariane ?". Le module s'étoffera donc de fonctionnalités dirigées vers l'utilisateur (straight-forward).
+
+Autant que possible, nous ferons du TDD pour valider nos étapes.
+
+### Une première ébauche
+
+Commençons par créer une simple directive qui affichera `Zen breadcrumb`.
+Le test contient le code "classique" d'un test de directive et une vérification de contenu basique :
+```js
+describe('The directive zenBreadcrumb', function() {
+
+    var element, scope;
+
+    beforeEach(function() {
+        module('zen-breadcrumb');
+    });
+
+    beforeEach(inject(function($rootScope, $compile) {
+        element = angular.element('<div zen-breadcrumb></div>'); // Déclaration du DOM
+        var compile = $compile(element); // Obtention de la fonction de compilation
+        scope = $rootScope.$new(); // Construction d'un scope
+        compile(scope); // Compilation du DOM vis à vis du scope
+        scope.$digest(); // Lance le dirty checking
+    }));
+
+    it('is compiled', function() {
+        expect(element.text()).toContain('Zen Breadcrumb');
+    });
+
+});
+```
+
+Nous pouvons maintenant créer la directive en utilisant directement la définition "étendue" : une fonction qui retourne un
+[Directive Definition Object](https://docs.angularjs.org/api/ng/service/$compile#directive-definition-object) :
+```js
+angular.module('zen-breadcrumb', ['ui.router.state'])
+    .directive('zenBreadcrumb', function() {
+        return {
+            link: {
+                post: function postLink(scope, element) {
+                    element.text('Zen breadcrumb');
+                }
+            }
+        };
+    });
+```
+La seule propriété utilisée pour le moment est la fonction postLink, appelée en fin de processus de compilation, lorsque
+tout a été initialisé/compilé. Le fonctionnement des directives a été expliqué en détail dans
+[cet article](http://blog.zenika.com/index.php?post/2013/12/19/AngularJS-Les-directives) de Matthieu Lux.
+
+Sans grande fierté, le test passe. Nous avons déclaré une directive, 1ère étape du développement du fil d'Ariane.
+
+**Commit :** [317544d37b](https://github.com/Zenika/zen-breadcrumb/commit/317544d37b65fd6779e364691da5d312dffdfd7d)
+
+### Etat courant
+
+TODO
+
+
